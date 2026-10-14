@@ -1,0 +1,16 @@
+{
+    "name": "Construct.UI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d12e9887c67b8e541b92a7add3656316"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

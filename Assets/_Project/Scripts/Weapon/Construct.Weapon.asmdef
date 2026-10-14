@@ -1,0 +1,18 @@
+{
+    "name": "Construct.Weapon",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d12e9887c67b8e541b92a7add3656316",
+        "GUID:53c33a42a42d46441947cbb5cfa1e6bb",
+        "GUID:4307f53044263cf4b835bd812fc161a4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
