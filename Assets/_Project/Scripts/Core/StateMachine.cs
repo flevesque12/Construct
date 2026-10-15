@@ -1,8 +1,8 @@
 using UnityEngine;
 using System;
-using Contruct.Core;
+using Construct.Core;
 
-namespace Core.Construct
+namespace Construct.Core
 {
     public sealed class StateMachine
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Contruct.Core
+namespace Construct.Core
 {
     public interface IState
     {

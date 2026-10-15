@@ -128,6 +128,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1034038986}
+  - component: {fileID: 1034038989}
+  - component: {fileID: 1034038988}
+  - component: {fileID: 1034038987}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -151,6 +154,63 @@ Transform:
   - {fileID: 1754304223}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1034038987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034038985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f6f8b44711425428de4246cd0344e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Player::Construct.Player.PlayerController
+  _input: {fileID: 11400000, guid: f6fc0b6be35e6a3408f5efe848c925df, type: 2}
+  _cameraTransform: {fileID: 1355323218}
+--- !u!114 &1034038988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034038985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3569a4f358e18b74b9d250556c202f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Player::Contruct.Player.PlayerMotor
+  _moveSpeed: 6
+  _acceleration: 40
+  _rotationSpeed: 720
+  _jumpHeight: 1.4
+  _gravity: -25
+  _groundedStickForce: -2
+--- !u!143 &1034038989
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034038985}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &1355323215
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,8 +554,6 @@ GameObject:
   - component: {fileID: 1754304223}
   - component: {fileID: 1754304225}
   - component: {fileID: 1754304224}
-  - component: {fileID: 1754304227}
-  - component: {fileID: 1754304226}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -575,49 +633,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1754304222}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1754304226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754304222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3569a4f358e18b74b9d250556c202f98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Construct.Player::Contruct.Player.PlayerMotor
-  _moveSpeed: 6
-  _acceleration: 40
-  _rotationSpeed: 720
-  _jumpHeight: 1.4
-  _gravity: -25
-  _groundedStickForce: -2
---- !u!143 &1754304227
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754304222}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.4
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
