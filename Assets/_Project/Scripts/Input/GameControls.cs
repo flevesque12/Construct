@@ -165,6 +165,15 @@ namespace Construct.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""7d885e9d-619d-4845-b4ca-0083adae5d19"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -387,52 +396,26 @@ namespace Construct.Input
                     ""action"": ""Fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
-            ""name"": ""Look"",
-            ""id"": ""3a4c87b3-b134-404a-a4fa-93656cbaf970"",
-            ""actions"": [
-                {
-                    ""name"": ""RightStick"",
-                    ""type"": ""Value"",
-                    ""id"": ""8358efa8-306e-4daa-afe4-f4a06fa00386"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Delta"",
-                    ""type"": ""Value"",
-                    ""id"": ""9477422c-2771-4590-b748-b9804988d119"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                }
-            ],
-            ""bindings"": [
-                {
                     ""name"": """",
-                    ""id"": ""d8283b0d-cf03-4f4a-b38b-1b1ea2113469"",
+                    ""id"": ""e9cdce1d-ba46-4936-9145-14010d7d13a7"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""RightStick"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""c109daf0-ad77-4b75-a1ce-8d8dc066450a"",
+                    ""id"": ""b8ce607b-d183-423f-ac47-98f48a0d43d7"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";KeyboardMouse"",
-                    ""action"": ""Delta"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -462,16 +445,12 @@ namespace Construct.Input
             m_Gameplay_LockOn = m_Gameplay.FindAction("LockOn", throwIfNotFound: true);
             m_Gameplay_Throw = m_Gameplay.FindAction("Throw", throwIfNotFound: true);
             m_Gameplay_Fire = m_Gameplay.FindAction("Fire", throwIfNotFound: true);
-            // Look
-            m_Look = asset.FindActionMap("Look", throwIfNotFound: true);
-            m_Look_RightStick = m_Look.FindAction("RightStick", throwIfNotFound: true);
-            m_Look_Delta = m_Look.FindAction("Delta", throwIfNotFound: true);
+            m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
         }
 
         ~@GameControls()
         {
             UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, GameControls.Gameplay.Disable() has not been called.");
-            UnityEngine.Debug.Assert(!m_Look.enabled, "This will cause a leak and performance issues, GameControls.Look.Disable() has not been called.");
         }
 
         /// <summary>
@@ -555,6 +534,7 @@ namespace Construct.Input
         private readonly InputAction m_Gameplay_LockOn;
         private readonly InputAction m_Gameplay_Throw;
         private readonly InputAction m_Gameplay_Fire;
+        private readonly InputAction m_Gameplay_Look;
         /// <summary>
         /// Provides access to input actions defined in input action map "Gameplay".
         /// </summary>
@@ -598,6 +578,10 @@ namespace Construct.Input
             /// Provides access to the underlying input action "Gameplay/Fire".
             /// </summary>
             public InputAction @Fire => m_Wrapper.m_Gameplay_Fire;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/Look".
+            /// </summary>
+            public InputAction @Look => m_Wrapper.m_Gameplay_Look;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -648,6 +632,9 @@ namespace Construct.Input
                 @Fire.started += instance.OnFire;
                 @Fire.performed += instance.OnFire;
                 @Fire.canceled += instance.OnFire;
+                @Look.started += instance.OnLook;
+                @Look.performed += instance.OnLook;
+                @Look.canceled += instance.OnLook;
             }
 
             /// <summary>
@@ -683,6 +670,9 @@ namespace Construct.Input
                 @Fire.started -= instance.OnFire;
                 @Fire.performed -= instance.OnFire;
                 @Fire.canceled -= instance.OnFire;
+                @Look.started -= instance.OnLook;
+                @Look.performed -= instance.OnLook;
+                @Look.canceled -= instance.OnLook;
             }
 
             /// <summary>
@@ -716,113 +706,6 @@ namespace Construct.Input
         /// Provides a new <see cref="GameplayActions" /> instance referencing this action map.
         /// </summary>
         public GameplayActions @Gameplay => new GameplayActions(this);
-
-        // Look
-        private readonly InputActionMap m_Look;
-        private List<ILookActions> m_LookActionsCallbackInterfaces = new List<ILookActions>();
-        private readonly InputAction m_Look_RightStick;
-        private readonly InputAction m_Look_Delta;
-        /// <summary>
-        /// Provides access to input actions defined in input action map "Look".
-        /// </summary>
-        public struct LookActions
-        {
-            private @GameControls m_Wrapper;
-
-            /// <summary>
-            /// Construct a new instance of the input action map wrapper class.
-            /// </summary>
-            public LookActions(@GameControls wrapper) { m_Wrapper = wrapper; }
-            /// <summary>
-            /// Provides access to the underlying input action "Look/RightStick".
-            /// </summary>
-            public InputAction @RightStick => m_Wrapper.m_Look_RightStick;
-            /// <summary>
-            /// Provides access to the underlying input action "Look/Delta".
-            /// </summary>
-            public InputAction @Delta => m_Wrapper.m_Look_Delta;
-            /// <summary>
-            /// Provides access to the underlying input action map instance.
-            /// </summary>
-            public InputActionMap Get() { return m_Wrapper.m_Look; }
-            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
-            public void Enable() { Get().Enable(); }
-            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
-            public void Disable() { Get().Disable(); }
-            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
-            public bool enabled => Get().enabled;
-            /// <summary>
-            /// Implicitly converts an <see ref="LookActions" /> to an <see ref="InputActionMap" /> instance.
-            /// </summary>
-            public static implicit operator InputActionMap(LookActions set) { return set.Get(); }
-            /// <summary>
-            /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
-            /// </summary>
-            /// <param name="instance">Callback instance.</param>
-            /// <remarks>
-            /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
-            /// </remarks>
-            /// <seealso cref="LookActions" />
-            public void AddCallbacks(ILookActions instance)
-            {
-                if (instance == null || m_Wrapper.m_LookActionsCallbackInterfaces.Contains(instance)) return;
-                m_Wrapper.m_LookActionsCallbackInterfaces.Add(instance);
-                @RightStick.started += instance.OnRightStick;
-                @RightStick.performed += instance.OnRightStick;
-                @RightStick.canceled += instance.OnRightStick;
-                @Delta.started += instance.OnDelta;
-                @Delta.performed += instance.OnDelta;
-                @Delta.canceled += instance.OnDelta;
-            }
-
-            /// <summary>
-            /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
-            /// </summary>
-            /// <remarks>
-            /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
-            /// </remarks>
-            /// <seealso cref="LookActions" />
-            private void UnregisterCallbacks(ILookActions instance)
-            {
-                @RightStick.started -= instance.OnRightStick;
-                @RightStick.performed -= instance.OnRightStick;
-                @RightStick.canceled -= instance.OnRightStick;
-                @Delta.started -= instance.OnDelta;
-                @Delta.performed -= instance.OnDelta;
-                @Delta.canceled -= instance.OnDelta;
-            }
-
-            /// <summary>
-            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="LookActions.UnregisterCallbacks(ILookActions)" />.
-            /// </summary>
-            /// <seealso cref="LookActions.UnregisterCallbacks(ILookActions)" />
-            public void RemoveCallbacks(ILookActions instance)
-            {
-                if (m_Wrapper.m_LookActionsCallbackInterfaces.Remove(instance))
-                    UnregisterCallbacks(instance);
-            }
-
-            /// <summary>
-            /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
-            /// </summary>
-            /// <remarks>
-            /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
-            /// </remarks>
-            /// <seealso cref="LookActions.AddCallbacks(ILookActions)" />
-            /// <seealso cref="LookActions.RemoveCallbacks(ILookActions)" />
-            /// <seealso cref="LookActions.UnregisterCallbacks(ILookActions)" />
-            public void SetCallbacks(ILookActions instance)
-            {
-                foreach (var item in m_Wrapper.m_LookActionsCallbackInterfaces)
-                    UnregisterCallbacks(item);
-                m_Wrapper.m_LookActionsCallbackInterfaces.Clear();
-                AddCallbacks(instance);
-            }
-        }
-        /// <summary>
-        /// Provides a new <see cref="LookActions" /> instance referencing this action map.
-        /// </summary>
-        public LookActions @Look => new LookActions(this);
         private int m_KeyboardMouseSchemeIndex = -1;
         /// <summary>
         /// Provides access to the input control scheme.
@@ -912,28 +795,13 @@ namespace Construct.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnFire(InputAction.CallbackContext context);
-        }
-        /// <summary>
-        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Look" which allows adding and removing callbacks.
-        /// </summary>
-        /// <seealso cref="LookActions.AddCallbacks(ILookActions)" />
-        /// <seealso cref="LookActions.RemoveCallbacks(ILookActions)" />
-        public interface ILookActions
-        {
             /// <summary>
-            /// Method invoked when associated input action "RightStick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// Method invoked when associated input action "Look" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>
             /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnRightStick(InputAction.CallbackContext context);
-            /// <summary>
-            /// Method invoked when associated input action "Delta" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-            /// </summary>
-            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnDelta(InputAction.CallbackContext context);
+            void OnLook(InputAction.CallbackContext context);
         }
     }
 }

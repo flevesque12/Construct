@@ -77,6 +77,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "7d885e9d-619d-4845-b4ca-0083adae5d19",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -299,52 +308,26 @@
                     "action": "Fire",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Look",
-            "id": "3a4c87b3-b134-404a-a4fa-93656cbaf970",
-            "actions": [
-                {
-                    "name": "RightStick",
-                    "type": "Value",
-                    "id": "8358efa8-306e-4daa-afe4-f4a06fa00386",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 },
                 {
-                    "name": "Delta",
-                    "type": "Value",
-                    "id": "9477422c-2771-4590-b748-b9804988d119",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
-                {
                     "name": "",
-                    "id": "d8283b0d-cf03-4f4a-b38b-1b1ea2113469",
+                    "id": "e9cdce1d-ba46-4936-9145-14010d7d13a7",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "RightStick",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "c109daf0-ad77-4b75-a1ce-8d8dc066450a",
+                    "id": "b8ce607b-d183-423f-ac47-98f48a0d43d7",
                     "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardMouse",
-                    "action": "Delta",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
