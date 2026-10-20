@@ -10,6 +10,7 @@ namespace Construct.Input
         // Continuous values, read every frame by the states
         public Vector2 Move { get; private set; }
         public Vector2 Look { get; private set; }
+        public bool IsLookFromPointer { get; private set; }
         public bool IsThrowHeld { get; private set; }
 
         // One-shot button events
@@ -42,7 +43,11 @@ namespace Construct.Input
         public void DisableGameplay() => _controls?.Gameplay.Disable();
 
         public void OnMove(InputAction.CallbackContext context) => Move = context.ReadValue<Vector2>();
-        public void OnLook(InputAction.CallbackContext context) => Look = context.ReadValue<Vector2>();
+        public void OnLook(InputAction.CallbackContext context)
+        {
+            Look = context.ReadValue<Vector2>();
+            IsLookFromPointer = context.control?.device is Pointer;
+        }
 
         public void OnJump(InputAction.CallbackContext context)
         {
