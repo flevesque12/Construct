@@ -13,6 +13,9 @@ namespace Construct.Player
         [SerializeField] private Transform _cameraTransform;
         [SerializeField] private LookFlickDetector _targetSwitch = new LookFlickDetector();
 
+        [Tooltip("Any component implementing ICameraRig (Unity can't serialize interface fields).")]
+        [SerializeField] private MonoBehaviour _cameraRigBehaviour;
+
         [Header("Lock-on")]
         [Tooltip("Speed multiplier while strafing around a locked target.")]
         [Range(0f, 1f)]
@@ -27,12 +30,24 @@ namespace Construct.Player
         // States, created once and reused
         public LocomotionState Locomotion { get; private set; }
 
+        private ICameraRig _cameraRig;
+
         private void Awake()
         {
             Motor = GetComponent<PlayerMotor>();
             LockOn = GetComponent<LockOnSystem>();
+            _cameraRig = _cameraRigBehaviour as ICameraRig;
             States = new StateMachine();
             Locomotion = new LocomotionState(this);
+        }
+
+        private void OnValidate()
+        {
+            if (_cameraRigBehaviour != null && !(_cameraRigBehaviour is ICameraRig))
+            {
+                Debug.LogError($"{_cameraRigBehaviour.name} does not implement ICameraRig.", this);
+                _cameraRigBehaviour = null;
+            }
         }
 
         private void OnEnable()
@@ -40,12 +55,25 @@ namespace Construct.Player
             _input.EnableGameplay();
             // Lock-on works in every state, so the controller owns it, not a state
             _input.LockOnPressed += LockOn.Toggle;
+            LockOn.TargetChanged += OnLockTargetChanged;
         }
 
         private void OnDisable()
         {
+            LockOn.TargetChanged -= OnLockTargetChanged;
             _input.LockOnPressed -= LockOn.Toggle;
             _input.DisableGameplay();
+        }
+
+        private void OnLockTargetChanged(ITargetable target)
+        {
+            if (_cameraRig == null)
+                return;
+
+            if (target != null)
+                _cameraRig.SetLockTarget(target);
+            else
+                _cameraRig.ClearLockTarget();
         }
 
         private void Start()

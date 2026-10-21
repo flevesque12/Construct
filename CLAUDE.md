@@ -364,13 +364,17 @@ Player  (tag Player, layer Player)  ← CharacterController (Center 0,1,0 / Heig
 │   └── Sphere                      ← "nose" mesh, no collider (it used to pull the camera into the player)
 └── CameraTarget                    ← empty, local (0, 1.5, 0)
 Main Camera                         ← CinemachineBrain
-PlayerCamera                        ← CinemachineCamera (Tracking Target = CameraTarget),
-                                      CinemachineOrbitalFollow, CinemachineRotationComposer,
-                                      PlayerCameraInput, CinemachineDeoccluder, CameraProximityHider
+CameraRig                           ← CinemachineCameraRig (implements ICameraRig)
+├── PlayerCamera                    ← orbit: CinemachineCamera (priority 10, Tracking Target = CameraTarget, Blend Hint Inherit Position),
+│                                     CinemachineOrbitalFollow, CinemachineRotationComposer,
+│                                     PlayerCameraInput, CinemachineDeoccluder, CameraProximityHider
+└── LockOnCamera                    ← CinemachineCamera (priority 20, disabled until a lock; LookAt = target AimPoint),
+                                      CinemachineOrbitalFollow (Sphere, radius 4.5, vertical 12°, yaw driven by the rig),
+                                      CinemachineRotationComposer (Screen Y 0.05, damping 0.5), CinemachineDeoccluder
 _Systems                            ← CursorLock (later: AttackTokenManager)
 TrainingDummy ×3                    ← prefab instances, layer Targetable
 ```
-`PlayerController` fields: Input = `InputReader` asset, Camera Transform = Main Camera.
+`PlayerController` fields: Input = `InputReader` asset, Camera Transform = Main Camera, Camera Rig Behaviour = CameraRig. `Player` also has `LockOnSystem` (View = Main Camera, Target Mask = Targetable, Obstacle Mask = Default). Main Camera's brain: default blend Ease In Out 0.35 s.
 Every child of `Player` stays on the `Player` layer, so the Deoccluder (Collide Against = `Default` only) never treats the player as an obstacle.
 
 Current camera settings:
@@ -829,7 +833,9 @@ Scene setup: Capsule named `TrainingDummy` on layer **`Targetable`** (keep its C
 
 ## 7. Next steps
 
-### Immediate: finish lock-on (3 pieces)
+### Lock-on — done (2026-10-21)
+`LockOnSystem` (scoring, toggle, auto-release, `TrySwitch`), `LookFlickDetector`, strafe in `LocomotionState`, `ICameraRig` + `CinemachineCameraRig` with the lock camera. The original plan is kept below for reference. Next: phase 03 (mannequin + animations), see the Blueprint.
+
 1. **Piece 1 — `ITargetable` + `TrainingDummy`** — done.
 2. **Piece 2 — `LockOnSystem`** (`Scripts/Weapon/LockOnSystem.cs`, namespace `Construct.Weapon`):
    - Toggle on `InputReader.LockOnPressed`.
