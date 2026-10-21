@@ -1,12 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 namespace Construct.Input
 {
+    // Temporary editor comfort; the pause menu will own the cursor later
     public sealed class CursorLock : MonoBehaviour
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
         {
             Lock();

@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Construct.Input
 {
-    [CreateAssetMenu(fileName = "InputReader", menuName = "Construct/InputReader")]
+    [CreateAssetMenu(fileName = "InputReader", menuName = "Construct/Input Reader")]
     public sealed class InputReader : ScriptableObject, GameControls.IGameplayActions
     {
         // Continuous values, read every frame by the states

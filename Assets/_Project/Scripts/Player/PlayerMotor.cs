@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Contruct.Player
+namespace Construct.Player
 {
     [RequireComponent(typeof(CharacterController))]
     public sealed class PlayerMotor : MonoBehaviour

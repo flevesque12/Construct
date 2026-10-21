@@ -159,4 +159,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c70c3cc07a358d846be47d31c0f7b352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Construct.Combat::Construct.Combat.TrainingDummy
-  aimPoint: {fileID: 4375089059241427531}
+  _aimPoint: {fileID: 4375089059241427531}

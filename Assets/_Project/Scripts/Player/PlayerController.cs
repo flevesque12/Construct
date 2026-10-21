@@ -1,7 +1,6 @@
 using UnityEngine;
 using Construct.Core;
 using Construct.Input;
-using Contruct.Player;
 
 namespace Construct.Player
 {

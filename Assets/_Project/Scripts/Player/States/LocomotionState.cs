@@ -1,7 +1,6 @@
-using Construct.Player;
 using UnityEngine;
 
-namespace Contruct.Player
+namespace Construct.Player
 {
     public sealed class LocomotionState : PlayerState
     {
