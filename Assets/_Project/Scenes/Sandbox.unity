@@ -227,6 +227,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Construct.Player::Construct.Player.PlayerController
   _input: {fileID: 11400000, guid: f6fc0b6be35e6a3408f5efe848c925df, type: 2}
   _cameraTransform: {fileID: 1355323218}
+  _targetSwitch:
+    _stickThreshold: 0.7
+    _stickReset: 0.3
+    _mouseThreshold: 60
+    _mouseWindow: 0.15
+    _cooldown: 0.2
 --- !u!114 &1034038988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,6 +299,7 @@ MonoBehaviour:
   _releaseRange: 20
   _maxAngle: 70
   _angleWeight: 0.7
+  _switchMaxAngle: 60
 --- !u!1 &1355323215
 GameObject:
   m_ObjectHideFlags: 0

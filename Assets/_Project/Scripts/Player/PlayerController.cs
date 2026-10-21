@@ -11,6 +11,7 @@ namespace Construct.Player
     {
         [SerializeField] private InputReader _input;
         [SerializeField] private Transform _cameraTransform;
+        [SerializeField] private LookFlickDetector _targetSwitch = new LookFlickDetector();
 
         public InputReader Input => _input;
         public PlayerMotor Motor { get; private set; }
@@ -48,7 +49,20 @@ namespace Construct.Player
 
         private void Update()
         {
+            UpdateTargetSwitch(Time.deltaTime);
             States.Tick(Time.deltaTime);
+        }
+
+        private void UpdateTargetSwitch(float deltaTime)
+        {
+            if (!LockOn.HasTarget)
+            {
+                _targetSwitch.Reset();
+                return;
+            }
+
+            if (_targetSwitch.TryGetFlick(_input.Look, _input.IsLookFromPointer, deltaTime, out Vector2 direction))
+                LockOn.TrySwitch(direction);
         }
 
         public Vector3 GetCameraRelativeMove()
