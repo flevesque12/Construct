@@ -188,6 +188,7 @@ GameObject:
   - component: {fileID: 1034038989}
   - component: {fileID: 1034038988}
   - component: {fileID: 1034038987}
+  - component: {fileID: 1034038990}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -269,6 +270,29 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &1034038990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034038985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4672268c5536ef4ab334d47d965248e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Weapon::Construct.Weapon.LockOnSystem
+  _viewTransform: {fileID: 1355323218}
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
+  _acquireRange: 15
+  _releaseRange: 20
+  _maxAngle: 70
+  _angleWeight: 0.7
 --- !u!1 &1355323215
 GameObject:
   m_ObjectHideFlags: 0

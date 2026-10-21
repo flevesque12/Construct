@@ -1,10 +1,12 @@
 using UnityEngine;
 using Construct.Core;
 using Construct.Input;
+using Construct.Weapon;
 
 namespace Construct.Player
 {
     [RequireComponent(typeof(PlayerMotor))]
+    [RequireComponent(typeof(LockOnSystem))]
     public sealed class PlayerController : MonoBehaviour
     {
         [SerializeField] private InputReader _input;
@@ -12,6 +14,7 @@ namespace Construct.Player
 
         public InputReader Input => _input;
         public PlayerMotor Motor { get; private set; }
+        public LockOnSystem LockOn { get; private set; }
         public StateMachine States { get; private set; }
 
         // States, created once and reused
@@ -20,6 +23,7 @@ namespace Construct.Player
         private void Awake()
         {
             Motor = GetComponent<PlayerMotor>();
+            LockOn = GetComponent<LockOnSystem>();
             States = new StateMachine();
             Locomotion = new LocomotionState(this);
         }
@@ -27,10 +31,13 @@ namespace Construct.Player
         private void OnEnable()
         {
             _input.EnableGameplay();
+            // Lock-on works in every state, so the controller owns it, not a state
+            _input.LockOnPressed += LockOn.Toggle;
         }
 
         private void OnDisable()
         {
+            _input.LockOnPressed -= LockOn.Toggle;
             _input.DisableGameplay();
         }
 
