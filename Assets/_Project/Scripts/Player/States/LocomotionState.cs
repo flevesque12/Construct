@@ -20,6 +20,15 @@ namespace Construct.Player
         {
             Vector3 moveDirection = Ctx.GetCameraRelativeMove();
 
+            if (Ctx.LockOn.HasTarget)
+            {
+                // Strafe: keep moving where the stick points, but always face the target
+                Vector3 toTarget = Ctx.LockOn.CurrentTarget.AimPoint.position - Ctx.transform.position;
+                Ctx.Motor.Move(moveDirection, Ctx.LockOnSpeedMultiplier, deltaTime);
+                Ctx.Motor.FaceDirection(toTarget, deltaTime);
+                return;
+            }
+
             Ctx.Motor.Move(moveDirection, 1f, deltaTime);
             Ctx.Motor.FaceDirection(moveDirection, deltaTime);
         }

@@ -13,7 +13,13 @@ namespace Construct.Player
         [SerializeField] private Transform _cameraTransform;
         [SerializeField] private LookFlickDetector _targetSwitch = new LookFlickDetector();
 
+        [Header("Lock-on")]
+        [Tooltip("Speed multiplier while strafing around a locked target.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _lockOnSpeedMultiplier = 0.85f;
+
         public InputReader Input => _input;
+        public float LockOnSpeedMultiplier => _lockOnSpeedMultiplier;
         public PlayerMotor Motor { get; private set; }
         public LockOnSystem LockOn { get; private set; }
         public StateMachine States { get; private set; }
