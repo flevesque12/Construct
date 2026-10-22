@@ -7,6 +7,7 @@ namespace Construct.Player
 {
     [RequireComponent(typeof(PlayerMotor))]
     [RequireComponent(typeof(LockOnSystem))]
+    [RequireComponent(typeof(AimSystem))]
     public sealed class PlayerController : MonoBehaviour
     {
         [SerializeField] private InputReader _input;
@@ -33,6 +34,7 @@ namespace Construct.Player
         public float AimSpeedMultiplier => _aimSpeedMultiplier;
         public PlayerMotor Motor { get; private set; }
         public LockOnSystem LockOn { get; private set; }
+        public AimSystem AimSystem { get; private set; }
         public ICameraRig CameraRig { get; private set; }
         public StateMachine States { get; private set; }
 
@@ -47,6 +49,7 @@ namespace Construct.Player
         {
             Motor = GetComponent<PlayerMotor>();
             LockOn = GetComponent<LockOnSystem>();
+            AimSystem = GetComponent<AimSystem>();
             CameraRig = _cameraRigBehaviour as ICameraRig;
             States = new StateMachine();
             Locomotion = new LocomotionState(this);

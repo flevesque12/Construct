@@ -376,11 +376,15 @@ CameraRig                           ← CinemachineCameraRig (implements ICamera
 │                                     CinemachineThirdPersonFollow (shoulder 0.45/0.15, arm 0.2, distance 2.2, obstacles on Default),
 │                                     AimCameraInput (mouse 0.1 °/px, stick 160/110 °/s, pitch −40..50, unscaled time)
 └── AimPivot                        ← empty, positioned on CameraTarget and rotated by AimCameraInput
+HUD                                 ← Canvas (Screen Space Overlay, scale with 1920×1080)
+└── Reticle                         ← Image (built-in Knob sprite, 12 px), ReticleView (listens to ReticleStateChannel)
 _Systems                            ← CursorLock (later: AttackTokenManager)
 TrainingDummy ×3                    ← prefab instances, layer Targetable
 ```
 `PlayerController` fields: Input = `InputReader` asset, Camera Transform = Main Camera, Camera Rig Behaviour = CameraRig. `Player` also has `LockOnSystem` (View = Main Camera, Target Mask = Targetable, Obstacle Mask = Default). Main Camera's brain: default blend Ease In Out 0.35 s, custom blends `Data/CameraBlends.asset` (0.15 s in and out of AimCamera).
 Aim (phase 04, piece 1): `AimState` entered from Locomotion when Throw is held ≥ 0.2 s (a shorter tap is reserved for the quick throw), 50% speed, faces camera forward, released = back to Locomotion. Lock-on target switching is disabled while aiming. Animator param `IsStrafing` (was `IsLockedOn`) = lock-on or aiming.
+Aim piece 2: `AimSystem` on Player (Weapon) raycasts from the camera center (mask Default + Targetable), range 8 m measured from CameraTarget (the throw origin until the sword hand exists), blocked by Default. Result `AimResult` (struct). It raises `Data/Events/ReticleStateChannel` only when the state changes. First event channel of the project: `EventChannel<T>` in Core + one concrete subclass per payload. `ReticleState` (Hidden / Neutral / Enemy / Breached) lives in Core so Weapon and UI share it. Breached is unused until phase 09.
+`Construct.Weapon` and `Construct.Player` no longer reference Cinemachine; `Construct.UI` references `UnityEngine.UI`.
 Every child of `Player` stays on the `Player` layer, so the Deoccluder (Collide Against = `Default` only) never treats the player as an obstacle.
 
 Current camera settings:

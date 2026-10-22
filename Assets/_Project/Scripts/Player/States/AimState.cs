@@ -10,10 +10,12 @@ namespace Construct.Player
         public override void Enter()
         {
             Ctx.CameraRig?.BeginAim();
+            Ctx.AimSystem.BeginAim();
         }
 
         public override void Exit()
         {
+            Ctx.AimSystem.EndAim();
             Ctx.CameraRig?.EndAim();
         }
 
