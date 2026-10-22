@@ -28,6 +28,9 @@ namespace Construct.Player
                 return;
             }
 
+            // The AimSystem picks the target, the camera rig does the pulling
+            Ctx.CameraRig?.SetAimAssistTarget(Ctx.AimSystem.AssistTarget);
+
             Vector3 moveDirection = Ctx.GetCameraRelativeMove();
             Ctx.Motor.Move(moveDirection, Ctx.AimSpeedMultiplier, deltaTime);
             Ctx.Motor.FaceDirection(Ctx.GetCameraForward(), deltaTime);

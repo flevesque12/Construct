@@ -28,14 +28,28 @@ namespace Construct.Cameras
         [SerializeField] private float _maxPitch = 50f;
         [SerializeField] private bool _invertY;
 
+        [Header("Aim assist")]
+        [Tooltip("The real camera: the assist aims the screen center, which is offset from the pivot.")]
+        [SerializeField] private Transform _viewTransform;
+        [Tooltip("How fast the aim is pulled toward the target (per second). Weak on mouse...")]
+        [SerializeField] private float _mouseAssistStrength = 2f;
+        [Tooltip("...stronger on gamepad, where precise aiming is harder.")]
+        [SerializeField] private float _gamepadAssistStrength = 8f;
+
         private float _yaw;
         private float _pitch;
+        private Transform _assistTarget;
 
         public void SetAngles(float yaw, float pitch)
         {
             _yaw = yaw;
             _pitch = Mathf.Clamp(pitch, _minPitch, _maxPitch);
             ApplyPivot();
+        }
+
+        public void SetAssistTarget(Transform target)
+        {
+            _assistTarget = target;
         }
 
         private void Update()
@@ -59,8 +73,30 @@ namespace Construct.Cameras
                 delta.y = -delta.y;
 
             _yaw += delta.x;
-            _pitch = Mathf.Clamp(_pitch + delta.y, _minPitch, _maxPitch);
+            _pitch += delta.y;
+            ApplyAssist();
+            _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
             ApplyPivot();
+        }
+
+        // Magnetism: ease the angles toward the target a little every frame. The player can
+        // still pull away, the assist only wins when the input is small.
+        private void ApplyAssist()
+        {
+            if (_assistTarget == null)
+                return;
+
+            Vector3 toTarget = _assistTarget.position - _viewTransform.position;
+            if (toTarget.sqrMagnitude < 0.01f)
+                return;
+
+            Vector3 desired = Quaternion.LookRotation(toTarget).eulerAngles;
+            float strength = _input.IsLookFromPointer ? _mouseAssistStrength : _gamepadAssistStrength;
+            // Frame-rate independent smoothing: same pull per second at 30 or 144 fps
+            float blend = 1f - Mathf.Exp(-strength * Time.unscaledDeltaTime);
+
+            _yaw = Mathf.LerpAngle(_yaw, desired.y, blend);
+            _pitch = Mathf.LerpAngle(_pitch, Mathf.DeltaAngle(0f, desired.x), blend);
         }
 
         private void ApplyPivot()

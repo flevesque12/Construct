@@ -68,8 +68,14 @@ namespace Construct.Cameras
                 return;
 
             _isAiming = false;
+            _aimInput.SetAssistTarget(null);
             _aimCamera.enabled = false;
             RefreshInputs();
+        }
+
+        public void SetAimAssistTarget(ITargetable target)
+        {
+            _aimInput.SetAssistTarget(target != null ? target.AimPoint : null);
         }
 
         // Only the live camera listens to Look; while locked, Look switches targets instead

@@ -10,5 +10,8 @@ namespace Construct.Core
         // Over-the-shoulder camera while the player aims the sword
         void BeginAim();
         void EndAim();
+
+        // Gently pulls the aim toward a target; null stops the pull
+        void SetAimAssistTarget(ITargetable target);
     }
 }

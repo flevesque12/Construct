@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Construct.Core;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ namespace Construct.Weapon
 {
     // Answers "what would a throw do right now?" while the player aims, and tells the HUD
     // through the reticle channel. It never reads input: AimState calls BeginAim / EndAim.
+    // It also slows time at the start of the aim and picks the aim-assist target.
     public sealed class AimSystem : MonoBehaviour
     {
         [Tooltip("Usually the main camera: the reticle is the center of the screen.")]
@@ -22,25 +24,45 @@ namespace Construct.Weapon
 
         [SerializeField] private ReticleStateEventChannel _reticleChannel;
 
-        private ReticleState _publishedState = ReticleState.Hidden;
+        [Header("Slow motion")]
+        [SerializeField] private SlowMotion _slowMotion;
+        [Range(0f, 1f)]
+        [SerializeField] private float _slowMotionScale = 0.7f;
+        [Tooltip("Real seconds of slow motion at the start of each aim.")]
+        [SerializeField] private float _slowMotionDuration = 1.5f;
 
-        // The ray usually stays on the same collider for many frames: cache its lookup
-        private Collider _lastCollider;
-        private ITargetable _lastTarget;
+        [Header("Aim assist")]
+        [Tooltip("Targets the assist can pull toward.")]
+        [SerializeField] private LayerMask _assistMask;
+        [Tooltip("A target must be within this angle of the screen center to be assisted.")]
+        [SerializeField] private float _assistAngle = 5f;
+
+        private ReticleState _publishedState = ReticleState.Hidden;
+        private readonly Collider[] _assistHits = new Collider[16];
+
+        // Lookups are cached per collider so nothing calls GetComponent every frame
+        private readonly Dictionary<Collider, ITargetable> _targetCache = new Dictionary<Collider, ITargetable>();
 
         public bool IsAiming { get; private set; }
         public AimResult Current { get; private set; }
+        // The target the camera should be gently pulled toward, or null
+        public ITargetable AssistTarget { get; private set; }
 
         public void BeginAim()
         {
             IsAiming = true;
+            if (_slowMotion != null)
+                _slowMotion.Request(this, _slowMotionScale, _slowMotionDuration);
             Refresh();
         }
 
         public void EndAim()
         {
             IsAiming = false;
+            if (_slowMotion != null)
+                _slowMotion.Release(this);
             Current = default;
+            AssistTarget = null;
             Publish(ReticleState.Hidden);
         }
 
@@ -53,7 +75,42 @@ namespace Construct.Weapon
         private void Refresh()
         {
             Current = Evaluate();
+            AssistTarget = FindAssistTarget();
             Publish(Current.State);
+        }
+
+        // The throwable target closest to the screen center, if it is within the assist cone
+        private ITargetable FindAssistTarget()
+        {
+            Vector3 origin = _throwOrigin.position;
+            Vector3 viewPosition = _viewTransform.position;
+            Vector3 viewForward = _viewTransform.forward;
+
+            int count = Physics.OverlapSphereNonAlloc(
+                origin, _range, _assistHits, _assistMask, QueryTriggerInteraction.Ignore);
+
+            ITargetable best = null;
+            float bestAngle = _assistAngle;
+
+            for (int i = 0; i < count; i++)
+            {
+                ITargetable candidate = FindTarget(_assistHits[i]);
+                if (candidate == null || !candidate.IsAlive)
+                    continue;
+
+                Vector3 aimPoint = candidate.AimPoint.position;
+                float angle = Vector3.Angle(viewForward, aimPoint - viewPosition);
+                if (angle > bestAngle)
+                    continue;
+
+                if (Physics.Linecast(origin, aimPoint, _obstacleMask, QueryTriggerInteraction.Ignore))
+                    continue;
+
+                bestAngle = angle;
+                best = candidate;
+            }
+
+            return best;
         }
 
         public AimResult Evaluate()
@@ -79,13 +136,13 @@ namespace Construct.Weapon
 
         private ITargetable FindTarget(Collider hitCollider)
         {
-            if (hitCollider != _lastCollider)
+            if (!_targetCache.TryGetValue(hitCollider, out ITargetable target))
             {
-                _lastCollider = hitCollider;
-                _lastTarget = hitCollider.GetComponentInParent<ITargetable>();
+                target = hitCollider.GetComponentInParent<ITargetable>();
+                _targetCache.Add(hitCollider, target);
             }
 
-            return _lastTarget;
+            return target;
         }
 
         // Only raise on change: listeners react to transitions, not to every frame
