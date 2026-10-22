@@ -1,4 +1,3 @@
-using Construct.Weapon;
 using UnityEngine;
 
 namespace Construct.Player
@@ -6,27 +5,26 @@ namespace Construct.Player
     // Translates what the player is doing into Animator parameters.
     // States and the motor never touch the Animator: they move the player, this reads the result.
     [DefaultExecutionOrder(50)] // after PlayerController has moved the player this frame
-    [RequireComponent(typeof(PlayerMotor))]
-    [RequireComponent(typeof(LockOnSystem))]
+    [RequireComponent(typeof(PlayerController))]
     public sealed class PlayerAnimator : MonoBehaviour
     {
         private static readonly int SpeedId = Animator.StringToHash("Speed");
         private static readonly int MoveXId = Animator.StringToHash("MoveX");
         private static readonly int MoveZId = Animator.StringToHash("MoveZ");
-        private static readonly int IsLockedOnId = Animator.StringToHash("IsLockedOn");
+        private static readonly int IsStrafingId = Animator.StringToHash("IsStrafing");
 
         [Tooltip("The Animator on the character model (child of the player).")]
         [SerializeField] private Animator _animator;
         [Tooltip("Smooths parameter changes so blends don't pop, in seconds.")]
         [SerializeField] private float _dampTime = 0.1f;
 
+        private PlayerController _player;
         private PlayerMotor _motor;
-        private LockOnSystem _lockOn;
 
         private void Awake()
         {
+            _player = GetComponent<PlayerController>();
             _motor = GetComponent<PlayerMotor>();
-            _lockOn = GetComponent<LockOnSystem>();
 
             // The CharacterController hovers by its skin width; sink the model by the same amount so the feet touch the ground
             float skinWidth = GetComponent<CharacterController>().skinWidth;
@@ -45,7 +43,7 @@ namespace Construct.Player
             _animator.SetFloat(SpeedId, Mathf.Clamp01(local.magnitude), _dampTime, deltaTime);
             _animator.SetFloat(MoveXId, local.x, _dampTime, deltaTime);
             _animator.SetFloat(MoveZId, local.z, _dampTime, deltaTime);
-            _animator.SetBool(IsLockedOnId, _lockOn.HasTarget);
+            _animator.SetBool(IsStrafingId, _player.IsStrafing);
         }
     }
 }

@@ -21,24 +21,36 @@ namespace Construct.Player
         [Range(0f, 1f)]
         [SerializeField] private float _lockOnSpeedMultiplier = 0.85f;
 
+        [Header("Aim")]
+        [Tooltip("How long Throw must be held before it counts as aiming instead of a tap.")]
+        [SerializeField] private float _aimHoldThreshold = 0.2f;
+        [Range(0f, 1f)]
+        [SerializeField] private float _aimSpeedMultiplier = 0.5f;
+
         public InputReader Input => _input;
         public float LockOnSpeedMultiplier => _lockOnSpeedMultiplier;
+        public float AimHoldThreshold => _aimHoldThreshold;
+        public float AimSpeedMultiplier => _aimSpeedMultiplier;
         public PlayerMotor Motor { get; private set; }
         public LockOnSystem LockOn { get; private set; }
+        public ICameraRig CameraRig { get; private set; }
         public StateMachine States { get; private set; }
+
+        // Facing one direction while moving in another (lock-on or aiming)
+        public bool IsStrafing => LockOn.HasTarget || States.Current == Aim;
 
         // States, created once and reused
         public LocomotionState Locomotion { get; private set; }
-
-        private ICameraRig _cameraRig;
+        public AimState Aim { get; private set; }
 
         private void Awake()
         {
             Motor = GetComponent<PlayerMotor>();
             LockOn = GetComponent<LockOnSystem>();
-            _cameraRig = _cameraRigBehaviour as ICameraRig;
+            CameraRig = _cameraRigBehaviour as ICameraRig;
             States = new StateMachine();
             Locomotion = new LocomotionState(this);
+            Aim = new AimState(this);
         }
 
         private void OnValidate()
@@ -67,13 +79,13 @@ namespace Construct.Player
 
         private void OnLockTargetChanged(ITargetable target)
         {
-            if (_cameraRig == null)
+            if (CameraRig == null)
                 return;
 
             if (target != null)
-                _cameraRig.SetLockTarget(target);
+                CameraRig.SetLockTarget(target);
             else
-                _cameraRig.ClearLockTarget();
+                CameraRig.ClearLockTarget();
         }
 
         private void Start()
@@ -89,7 +101,8 @@ namespace Construct.Player
 
         private void UpdateTargetSwitch(float deltaTime)
         {
-            if (!LockOn.HasTarget)
+            // While aiming, Look moves the aim camera, so it must not switch targets
+            if (!LockOn.HasTarget || States.Current == Aim)
             {
                 _targetSwitch.Reset();
                 return;
@@ -112,6 +125,13 @@ namespace Construct.Player
             right.Normalize();
 
             return forward * input.y + right * input.x;
+        }
+
+        public Vector3 GetCameraForward()
+        {
+            Vector3 forward = _cameraTransform.forward;
+            forward.y = 0f;
+            return forward.normalized;
         }
     }
 }

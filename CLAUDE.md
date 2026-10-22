@@ -369,13 +369,18 @@ CameraRig                           ← CinemachineCameraRig (implements ICamera
 ├── PlayerCamera                    ← orbit: CinemachineCamera (priority 10, Tracking Target = CameraTarget, Blend Hint Inherit Position),
 │                                     CinemachineOrbitalFollow, CinemachineRotationComposer,
 │                                     PlayerCameraInput, CinemachineDeoccluder, CameraProximityHider
-└── LockOnCamera                    ← CinemachineCamera (priority 20, disabled until a lock; LookAt = target AimPoint),
-                                      CinemachineOrbitalFollow (Sphere, radius 4.5, vertical 12°, yaw driven by the rig),
-                                      CinemachineRotationComposer (Screen Y 0.05, damping 0.5), CinemachineDeoccluder
+├── LockOnCamera                    ← CinemachineCamera (priority 20, disabled until a lock; LookAt = target AimPoint),
+│                                     CinemachineOrbitalFollow (Sphere, radius 4.5, vertical 12°, yaw driven by the rig),
+│                                     CinemachineRotationComposer (Screen Y 0.05, damping 0.5), CinemachineDeoccluder
+├── AimCamera                       ← CinemachineCamera (priority 30, FOV 50, disabled until aiming; Follow = AimPivot),
+│                                     CinemachineThirdPersonFollow (shoulder 0.45/0.15, arm 0.2, distance 2.2, obstacles on Default),
+│                                     AimCameraInput (mouse 0.1 °/px, stick 160/110 °/s, pitch −40..50, unscaled time)
+└── AimPivot                        ← empty, positioned on CameraTarget and rotated by AimCameraInput
 _Systems                            ← CursorLock (later: AttackTokenManager)
 TrainingDummy ×3                    ← prefab instances, layer Targetable
 ```
-`PlayerController` fields: Input = `InputReader` asset, Camera Transform = Main Camera, Camera Rig Behaviour = CameraRig. `Player` also has `LockOnSystem` (View = Main Camera, Target Mask = Targetable, Obstacle Mask = Default). Main Camera's brain: default blend Ease In Out 0.35 s.
+`PlayerController` fields: Input = `InputReader` asset, Camera Transform = Main Camera, Camera Rig Behaviour = CameraRig. `Player` also has `LockOnSystem` (View = Main Camera, Target Mask = Targetable, Obstacle Mask = Default). Main Camera's brain: default blend Ease In Out 0.35 s, custom blends `Data/CameraBlends.asset` (0.15 s in and out of AimCamera).
+Aim (phase 04, piece 1): `AimState` entered from Locomotion when Throw is held ≥ 0.2 s (a shorter tap is reserved for the quick throw), 50% speed, faces camera forward, released = back to Locomotion. Lock-on target switching is disabled while aiming. Animator param `IsStrafing` (was `IsLockedOn`) = lock-on or aiming.
 Every child of `Player` stays on the `Player` layer, so the Deoccluder (Collide Against = `Default` only) never treats the player as an obstacle.
 
 Current camera settings:

@@ -5,11 +5,15 @@ using UnityEngine;
 namespace Construct.Cameras
 {
     // The only class that turns gameplay camera requests into Cinemachine.
-    // Two cameras: the free orbit, and a lock camera that stays behind the
-    // player facing the target. The brain blends between them.
+    // Three cameras: the free orbit, a lock camera that stays behind the player
+    // facing the target, and an over-the-shoulder aim camera. Priorities decide
+    // which one is live (aim 30 > lock 20 > orbit 10); the brain blends between them.
     [DefaultExecutionOrder(100)] // runs after the player has moved this frame
     public sealed class CinemachineCameraRig : MonoBehaviour, ICameraRig
     {
+        [Tooltip("The real camera (Main Camera): aiming starts from where it looks.")]
+        [SerializeField] private Transform _outputCamera;
+
         [Header("Orbit")]
         [SerializeField] private CinemachineCamera _orbitCamera;
         [SerializeField] private PlayerCameraInput _orbitInput;
@@ -21,9 +25,14 @@ namespace Construct.Cameras
         [Tooltip("How fast the lock camera swings behind the player, in seconds.")]
         [SerializeField] private float _yawSmoothTime = 0.15f;
 
+        [Header("Aim")]
+        [SerializeField] private CinemachineCamera _aimCamera;
+        [SerializeField] private AimCameraInput _aimInput;
+
         private CinemachineOrbitalFollow _orbitFollow;
         private CinemachineOrbitalFollow _lockFollow;
         private ITargetable _lockTarget;
+        private bool _isAiming;
         private float _yawVelocity;
 
         private void Awake()
@@ -31,10 +40,43 @@ namespace Construct.Cameras
             _orbitFollow = _orbitCamera.GetComponent<CinemachineOrbitalFollow>();
             _lockFollow = _lockCamera.GetComponent<CinemachineOrbitalFollow>();
 
-            // When the orbit comes back, it starts from wherever the lock camera was,
-            // so unlocking leaves the view behind the player instead of snapping
+            // When the orbit comes back, it starts from wherever the previous camera was,
+            // so unlocking or ending the aim leaves the view where it was instead of snapping
             _orbitCamera.BlendHint |= CinemachineCore.BlendHints.InheritPosition;
             _lockCamera.enabled = false;
+            _aimCamera.enabled = false;
+            RefreshInputs();
+        }
+
+        public void BeginAim()
+        {
+            if (_isAiming)
+                return;
+
+            // Start the aim exactly where the player was looking
+            Vector3 euler = _outputCamera.rotation.eulerAngles;
+            _aimInput.SetAngles(euler.y, Mathf.DeltaAngle(0f, euler.x));
+
+            _isAiming = true;
+            _aimCamera.enabled = true;
+            RefreshInputs();
+        }
+
+        public void EndAim()
+        {
+            if (!_isAiming)
+                return;
+
+            _isAiming = false;
+            _aimCamera.enabled = false;
+            RefreshInputs();
+        }
+
+        // Only the live camera listens to Look; while locked, Look switches targets instead
+        private void RefreshInputs()
+        {
+            _aimInput.enabled = _isAiming;
+            _orbitInput.enabled = !_isAiming && _lockTarget == null;
         }
 
         public void SetLockTarget(ITargetable target)
@@ -56,9 +98,8 @@ namespace Construct.Cameras
             _lockFollow.HorizontalAxis.Value = _orbitFollow.HorizontalAxis.Value;
             _yawVelocity = 0f;
 
-            // The mouse and stick now switch targets instead of orbiting
-            _orbitInput.enabled = false;
             _lockCamera.enabled = true;
+            RefreshInputs();
         }
 
         public void ClearLockTarget()
@@ -68,7 +109,7 @@ namespace Construct.Cameras
 
             _lockTarget = null;
             _lockCamera.enabled = false;
-            _orbitInput.enabled = true;
+            RefreshInputs();
         }
 
         private void Update()

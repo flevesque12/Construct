@@ -4,10 +4,13 @@ namespace Construct.Player
 {
     public sealed class LocomotionState : PlayerState
     {
+        private float _throwHeldTime;
+
         public LocomotionState(PlayerController ctx) : base(ctx){ }
 
         public override void Enter()
         {
+            _throwHeldTime = 0f;
             Ctx.Input.JumpPressed += OnJumpPressed;
         }
 
@@ -18,6 +21,21 @@ namespace Construct.Player
 
         public override void Tick(float deltaTime)
         {
+            // Throw is a tap (quick throw, phase 10) or a hold (aim): only the hold time tells them apart
+            if (Ctx.Input.IsThrowHeld)
+            {
+                _throwHeldTime += deltaTime;
+                if (_throwHeldTime >= Ctx.AimHoldThreshold)
+                {
+                    Ctx.States.ChangeState(Ctx.Aim);
+                    return;
+                }
+            }
+            else
+            {
+                _throwHeldTime = 0f;
+            }
+
             Vector3 moveDirection = Ctx.GetCameraRelativeMove();
 
             if (Ctx.LockOn.HasTarget)

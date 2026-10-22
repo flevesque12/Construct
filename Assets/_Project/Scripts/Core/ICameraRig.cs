@@ -6,5 +6,9 @@ namespace Construct.Core
     {
         void SetLockTarget(ITargetable target);
         void ClearLockTarget();
+
+        // Over-the-shoulder camera while the player aims the sword
+        void BeginAim();
+        void EndAim();
     }
 }
