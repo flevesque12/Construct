@@ -21,6 +21,8 @@ namespace Construct.Player
 
         public bool IsGrounded => _controller.isGrounded;
         public Vector3 Velocity => _horizontalVelocity + Vector3.up * _verticalVelocity;
+        // Top horizontal speed allowed by the last Move call (base speed × multiplier)
+        public float MaxSpeed { get; private set; }
 
         private void Awake()
         {
@@ -32,7 +34,8 @@ namespace Construct.Player
             direction.y = 0f;
             direction = Vector3.ClampMagnitude(direction, 1f);
 
-            Vector3 targetVelocity = direction * (_moveSpeed * speedMultiplier);
+            MaxSpeed = _moveSpeed * speedMultiplier;
+            Vector3 targetVelocity = direction * MaxSpeed;
             _horizontalVelocity = Vector3.MoveTowards(
                 _horizontalVelocity, targetVelocity, _acceleration * deltaTime);
 

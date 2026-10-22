@@ -359,9 +359,10 @@ No exception anymore: the orbit is driven by `PlayerCameraInput`, which reads `I
 
 ### Scene: `Sandbox`
 ```
-Player  (tag Player, layer Player)  ← CharacterController (Center 0,1,0 / Height 2 / Radius 0.4), PlayerMotor, PlayerController
-├── Visual                          ← Capsule mesh only, local Y = 1, no collider
-│   └── Sphere                      ← "nose" mesh, no collider (it used to pull the camera into the player)
+Player  (tag Player, layer Player)  ← CharacterController (Center 0,1,0 / Height 2 / Radius 0.4), PlayerMotor, PlayerController,
+│                                     LockOnSystem, PlayerAnimator
+├── Model                           ← HumanM_Model (Kevin Iglesias pack, Humanoid), KernelMAT (white URP Lit),
+│                                     Animator: Kernel.controller, no root motion. No colliders anywhere under Player.
 └── CameraTarget                    ← empty, local (0, 1.5, 0)
 Main Camera                         ← CinemachineBrain
 CameraRig                           ← CinemachineCameraRig (implements ICameraRig)
@@ -832,6 +833,13 @@ Scene setup: Capsule named `TrainingDummy` on layer **`Targetable`** (keep its C
 ---
 
 ## 7. Next steps
+
+### Animations (phase 03)
+- Source: **Kevin Iglesias "Human Animations"** in `Assets/ThirdParty/` (git-ignored, Asset Store license). Already Humanoid with one shared avatar `HumanM_ModelAvatar`, in-place loops. Use the `HumanM@` (male) clips.
+- `Assets/_Project/Animations/Player/Kernel.controller`: parameters `Speed`, `MoveX`, `MoveZ`, `IsLockedOn`. States `Locomotion` (1D: Idle01 / Walk01_Forward 0.35 / Run01_Forward 1) and `Strafe` (2D freeform: Walk01_* ring at 0.35, Run01_* ring at 1), 0.15 s transitions on `IsLockedOn`.
+- `PlayerAnimator` reads `PlayerMotor.Velocity / MaxSpeed` in local space; nothing else touches the Animator.
+- The pack covers: 8-dir walk/run, idle, 1H attacks ×5 (L/R), 2H attacks ×4, combat idle, Dodge01, CombatDamage01/02, CombatDeath01–04, Stun01 (good for Breach).
+- Missing, get from Mixamo later: jump (up / fall / land), sword throw + catch, aerial attacks + smash, launcher, hack pose.
 
 ### Lock-on — done (2026-10-21)
 `LockOnSystem` (scoring, toggle, auto-release, `TrySwitch`), `LookFlickDetector`, strafe in `LocomotionState`, `ICameraRig` + `CinemachineCameraRig` with the lock camera. The original plan is kept below for reference. Next: phase 03 (mannequin + animations), see the Blueprint.
