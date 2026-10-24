@@ -738,6 +738,12 @@ MonoBehaviour:
   _lockOnSpeedMultiplier: 0.85
   _aimHoldThreshold: 0.2
   _aimSpeedMultiplier: 0.5
+  _combo:
+    _lightCombo:
+    - {fileID: 11400000, guid: 7151d22204e1935468739fe9d6beb10d, type: 2}
+    - {fileID: 11400000, guid: 1abbef3c5c99c874d9997cc5c95c8e62, type: 2}
+    - {fileID: 11400000, guid: bcdda8c7cd35b164c995ab7c62bb96e5, type: 2}
+  _inputBufferWindow: 0.2
 --- !u!114 &1034038988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -819,6 +825,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Construct.Player::Construct.Player.PlayerAnimator
   _animator: {fileID: 510797482}
   _dampTime: 0.1
+  _returnToLocomotionDuration: 0.2
 --- !u!114 &1034038992
 MonoBehaviour:
   m_ObjectHideFlags: 0

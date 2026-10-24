@@ -1,9 +1,10 @@
+using Construct.Combat;
 using UnityEngine;
 
 namespace Construct.Player
 {
-    // Translates what the player is doing into Animator parameters.
-    // States and the motor never touch the Animator: they move the player, this reads the result.
+    // The only class that touches the Animator. Locomotion is read from the motor every frame;
+    // one-shot actions (attacks) are played on request by the states.
     [DefaultExecutionOrder(50)] // after PlayerController has moved the player this frame
     [RequireComponent(typeof(PlayerController))]
     public sealed class PlayerAnimator : MonoBehaviour
@@ -12,11 +13,16 @@ namespace Construct.Player
         private static readonly int MoveXId = Animator.StringToHash("MoveX");
         private static readonly int MoveZId = Animator.StringToHash("MoveZ");
         private static readonly int IsStrafingId = Animator.StringToHash("IsStrafing");
+        private static readonly int AttackSpeedId = Animator.StringToHash("AttackSpeed");
+        private static readonly int LocomotionStateId = Animator.StringToHash("Locomotion");
+        private static readonly int StrafeStateId = Animator.StringToHash("Strafe");
 
         [Tooltip("The Animator on the character model (child of the player).")]
         [SerializeField] private Animator _animator;
         [Tooltip("Smooths parameter changes so blends don't pop, in seconds.")]
         [SerializeField] private float _dampTime = 0.1f;
+        [Tooltip("Cross-fade from an action back to locomotion, in seconds.")]
+        [SerializeField] private float _returnToLocomotionDuration = 0.2f;
 
         private PlayerController _player;
         private PlayerMotor _motor;
@@ -44,6 +50,19 @@ namespace Construct.Player
             _animator.SetFloat(MoveXId, local.x, _dampTime, deltaTime);
             _animator.SetFloat(MoveZId, local.z, _dampTime, deltaTime);
             _animator.SetBool(IsStrafingId, _player.IsStrafing);
+        }
+
+        public void PlayAttack(AttackData attack)
+        {
+            _animator.SetFloat(AttackSpeedId, attack.Speed);
+            // Restart from frame 0 even if the same state is already playing
+            _animator.CrossFadeInFixedTime(attack.StateHash, attack.TransitionDuration, 0, 0f);
+        }
+
+        public void PlayLocomotion()
+        {
+            int state = _player.IsStrafing ? StrafeStateId : LocomotionStateId;
+            _animator.CrossFadeInFixedTime(state, _returnToLocomotionDuration);
         }
     }
 }

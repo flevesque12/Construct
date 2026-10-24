@@ -55,6 +55,16 @@ namespace Construct.Player
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * deltaTime);
         }
 
+        // Instant turn, for actions that must commit to a direction (attacks)
+        public void SnapFacing(Vector3 direction)
+        {
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f)
+                return;
+
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
+
         public void Jump()
         {
             if (!IsGrounded)

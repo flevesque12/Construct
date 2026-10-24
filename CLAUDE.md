@@ -851,6 +851,13 @@ Scene setup: Capsule named `TrainingDummy` on layer **`Targetable`** (keep its C
 - The pack covers: 8-dir walk/run, idle, 1H attacks ×5 (L/R), 2H attacks ×4, combat idle, Dodge01, CombatDamage01/02, CombatDeath01–04, Stun01 (good for Breach).
 - Missing, get from Mixamo later: jump (up / fall / land), sword throw + catch, aerial attacks + smash, launcher, hack pose.
 
+### Light combo (phase 05, piece 1)
+- `InputBuffer` + `InputCommand` (Input): only the latest press is kept, expires after 0.2 s of **real** time. `PlayerController` pushes `LightAttack` presses (not while aiming, since left click is also Fire) and states consume them.
+- `AttackData` (Combat, SO in `Data/Attacks/`): Animator state name (hashed in `OnEnable`), clip (for duration), speed, transition, normalized combo window and cancel start. **Timing is data, not Animation Events**: the clips are in the git-ignored ThirdParty pack, so events written into their import settings would be lost on clone.
+- `ComboController` ([Serializable] on PlayerController, `_lightCombo` = Light1/2/3), `AttackState` (timer → normalized time; buffered press in window chains, move after cancel point exits, end → Locomotion), `PlayerMotor.SnapFacing` (each hit faces the lock target or the stick).
+- `Kernel.controller`: param `AttackSpeed` (default 1), states `Light1/2/3` = `HumanM@Attack1H01/02/03_R`, speed driven by `AttackSpeed`, no transitions (played by `PlayerAnimator.PlayAttack`, back with `PlayLocomotion`).
+- Data: Light1/2 speed 1.4 (≈ 0.8 s), Light3 1.25 (≈ 1.04 s); combo window 0.30–0.75; cancel 0.65 (Light3 0.75). Swap clips or tune in the assets, no code.
+
 ### Lock-on — done (2026-10-21)
 `LockOnSystem` (scoring, toggle, auto-release, `TrySwitch`), `LookFlickDetector`, strafe in `LocomotionState`, `ICameraRig` + `CinemachineCameraRig` with the lock camera. The original plan is kept below for reference. Next: phase 03 (mannequin + animations), see the Blueprint.
 

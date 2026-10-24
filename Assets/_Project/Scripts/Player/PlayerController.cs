@@ -28,7 +28,15 @@ namespace Construct.Player
         [Range(0f, 1f)]
         [SerializeField] private float _aimSpeedMultiplier = 0.5f;
 
+        [Header("Combat")]
+        [SerializeField] private ComboController _combo = new ComboController();
+        [Tooltip("How long a press stays queued before it expires, in real seconds.")]
+        [SerializeField] private float _inputBufferWindow = 0.2f;
+
         public InputReader Input => _input;
+        public InputBuffer InputBuffer { get; private set; }
+        public ComboController Combo => _combo;
+        public PlayerAnimator Animator { get; private set; }
         public float LockOnSpeedMultiplier => _lockOnSpeedMultiplier;
         public float AimHoldThreshold => _aimHoldThreshold;
         public float AimSpeedMultiplier => _aimSpeedMultiplier;
@@ -44,16 +52,20 @@ namespace Construct.Player
         // States, created once and reused
         public LocomotionState Locomotion { get; private set; }
         public AimState Aim { get; private set; }
+        public AttackState Attack { get; private set; }
 
         private void Awake()
         {
             Motor = GetComponent<PlayerMotor>();
             LockOn = GetComponent<LockOnSystem>();
             AimSystem = GetComponent<AimSystem>();
+            Animator = GetComponent<PlayerAnimator>();
             CameraRig = _cameraRigBehaviour as ICameraRig;
+            InputBuffer = new InputBuffer(_inputBufferWindow);
             States = new StateMachine();
             Locomotion = new LocomotionState(this);
             Aim = new AimState(this);
+            Attack = new AttackState(this);
         }
 
         private void OnValidate()
@@ -71,13 +83,23 @@ namespace Construct.Player
             // Lock-on works in every state, so the controller owns it, not a state
             _input.LockOnPressed += LockOn.Toggle;
             LockOn.TargetChanged += OnLockTargetChanged;
+            // Presses go to the buffer; states decide when to use them
+            _input.LightAttackPressed += OnLightAttackPressed;
         }
 
         private void OnDisable()
         {
+            _input.LightAttackPressed -= OnLightAttackPressed;
             LockOn.TargetChanged -= OnLockTargetChanged;
             _input.LockOnPressed -= LockOn.Toggle;
             _input.DisableGameplay();
+        }
+
+        private void OnLightAttackPressed()
+        {
+            // Left click is also Fire while aiming: that press is a throw, not an attack
+            if (States.Current != Aim)
+                InputBuffer.Push(InputCommand.LightAttack);
         }
 
         private void OnLockTargetChanged(ITargetable target)

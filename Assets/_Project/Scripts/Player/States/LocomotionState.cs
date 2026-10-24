@@ -1,3 +1,4 @@
+using Construct.Input;
 using UnityEngine;
 
 namespace Construct.Player
@@ -21,6 +22,12 @@ namespace Construct.Player
 
         public override void Tick(float deltaTime)
         {
+            if (Ctx.Combo.HasNext && Ctx.InputBuffer.TryConsume(InputCommand.LightAttack))
+            {
+                Ctx.States.ChangeState(Ctx.Attack);
+                return;
+            }
+
             // Throw is a tap (quick throw, phase 10) or a hold (aim): only the hold time tells them apart
             if (Ctx.Input.IsThrowHeld)
             {
