@@ -1,5 +1,73 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1926130454476805595
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 218469163837027563}
+  - component: {fileID: 5043417999486835866}
+  - component: {fileID: 5419899054072445528}
+  m_Layer: 8
+  m_Name: Hurtbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &218469163837027563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926130454476805595}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6563125657345496224}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5043417999486835866
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926130454476805595}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.55
+  m_Height: 2.1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5419899054072445528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926130454476805595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f7c7d6657197b47ac48131eac80ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Hurtbox
 --- !u!1 &3524854511708422304
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,6 +112,9 @@ GameObject:
   - component: {fileID: 2986904862363024959}
   - component: {fileID: 5628838610725351298}
   - component: {fileID: 8610463954032095886}
+  - component: {fileID: 8013391879813001883}
+  - component: {fileID: 3194281930648557498}
+  - component: {fileID: 3024753973645278776}
   m_Layer: 6
   m_Name: TrainingDummy
   m_TagString: Untagged
@@ -65,6 +136,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4375089059241427531}
+  - {fileID: 218469163837027563}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3159490704441028733
@@ -160,3 +232,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Construct.Combat::Construct.Combat.TrainingDummy
   _aimPoint: {fileID: 4375089059241427531}
+--- !u!114 &8013391879813001883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308247874458692612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d85a10e3672a7a84c989c59b2cad346c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Health
+  _max: 100
+--- !u!114 &3194281930648557498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308247874458692612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca9ca671e01a92d47a151940c9239388, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Integrity
+  _max: 30
+--- !u!114 &3024753973645278776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308247874458692612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 007b58ce7ea611442a128d306dad98be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Combatant
+  _team: 1

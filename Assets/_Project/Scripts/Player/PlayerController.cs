@@ -1,4 +1,5 @@
 using UnityEngine;
+using Construct.Combat;
 using Construct.Core;
 using Construct.Input;
 using Construct.Weapon;
@@ -29,6 +30,7 @@ namespace Construct.Player
         [SerializeField] private float _aimSpeedMultiplier = 0.5f;
 
         [Header("Combat")]
+        [SerializeField] private Hitbox _hitbox;
         [SerializeField] private ComboController _combo = new ComboController();
         [Tooltip("How long a press stays queued before it expires, in real seconds.")]
         [SerializeField] private float _inputBufferWindow = 0.2f;
@@ -36,6 +38,7 @@ namespace Construct.Player
         public InputReader Input => _input;
         public InputBuffer InputBuffer { get; private set; }
         public ComboController Combo => _combo;
+        public Hitbox Hitbox => _hitbox;
         public PlayerAnimator Animator { get; private set; }
         public float LockOnSpeedMultiplier => _lockOnSpeedMultiplier;
         public float AimHoldThreshold => _aimHoldThreshold;

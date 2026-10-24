@@ -18,9 +18,15 @@ namespace Construct.Combat
         [Tooltip("Cross-fade into this attack, in seconds.")]
         [SerializeField] private float _transitionDuration = 0.08f;
 
+        [Header("Damage")]
+        [SerializeField] private float _healthDamage = 10f;
+        [SerializeField] private float _integrityDamage = 6f;
+
         [Header("Windows (normalized)")]
-        [Tooltip("A buffered attack press during this window chains into the next hit.")]
-        [SerializeField] private Vector2 _comboWindow = new Vector2(0.35f, 0.8f);
+        [Tooltip("The hitbox is live during this window: where the swing actually connects.")]
+        [SerializeField] private Vector2 _hitWindow = new Vector2(0.3f, 0.5f);
+        [Tooltip("A buffered attack press during this window chains into the next hit. Starts after the hit window, so chaining never cuts a hit.")]
+        [SerializeField] private Vector2 _comboWindow = new Vector2(0.5f, 0.85f);
         [Tooltip("From here on, moving (and dodging, later) interrupts the attack.")]
         [Range(0f, 1f)]
         [SerializeField] private float _cancelStart = 0.7f;
@@ -31,7 +37,11 @@ namespace Construct.Combat
         public float Speed => _speed;
         public float TransitionDuration => _transitionDuration;
         public float Duration => _clip != null ? _clip.length / _speed : 0.5f;
+        public float HealthDamage => _healthDamage;
+        public float IntegrityDamage => _integrityDamage;
         public float CancelStart => _cancelStart;
+        public float HitStart => _hitWindow.x;
+        public float HitEnd => _hitWindow.y;
 
         public bool IsInComboWindow(float normalizedTime)
         {
@@ -47,7 +57,10 @@ namespace Construct.Combat
         private void OnValidate()
         {
             _stateHash = Animator.StringToHash(_animatorState);
-            _comboWindow.x = Mathf.Clamp01(_comboWindow.x);
+            _hitWindow.x = Mathf.Clamp01(_hitWindow.x);
+            _hitWindow.y = Mathf.Clamp(_hitWindow.y, _hitWindow.x, 1f);
+            // Never let the next hit start before this one has connected
+            _comboWindow.x = Mathf.Clamp(_comboWindow.x, _hitWindow.y, 1f);
             _comboWindow.y = Mathf.Clamp(_comboWindow.y, _comboWindow.x, 1f);
         }
     }

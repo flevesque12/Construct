@@ -690,6 +690,8 @@ GameObject:
   - component: {fileID: 1034038990}
   - component: {fileID: 1034038991}
   - component: {fileID: 1034038992}
+  - component: {fileID: 1034038994}
+  - component: {fileID: 1034038993}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -712,6 +714,7 @@ Transform:
   m_Children:
   - {fileID: 1571600165}
   - {fileID: 510797480}
+  - {fileID: 1700521957}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1034038987
@@ -738,6 +741,7 @@ MonoBehaviour:
   _lockOnSpeedMultiplier: 0.85
   _aimHoldThreshold: 0.2
   _aimSpeedMultiplier: 0.5
+  _hitbox: {fileID: 1700521958}
   _combo:
     _lightCombo:
     - {fileID: 11400000, guid: 7151d22204e1935468739fe9d6beb10d, type: 2}
@@ -856,6 +860,32 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _assistAngle: 5
+--- !u!114 &1034038993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034038985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 007b58ce7ea611442a128d306dad98be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Combatant
+  _team: 0
+--- !u!114 &1034038994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034038985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d85a10e3672a7a84c989c59b2cad346c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Health
+  _max: 100
 --- !u!1 &1355323215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,6 +1507,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 556141858}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1700521956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1700521957}
+  - component: {fileID: 1700521958}
+  m_Layer: 7
+  m_Name: AttackHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1700521957
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700521956}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1034038986}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1700521958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700521956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 579b35c68854f3b409c55fe66a623d40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Hitbox
+  _owner: {fileID: 1034038993}
+  _hurtboxMask:
+    serializedVersion: 2
+    m_Bits: 256
+  _center: {x: 0, y: 1, z: 0.9}
+  _size: {x: 1.2, y: 1, z: 1.4}
 --- !u!1 &1706596778
 GameObject:
   m_ObjectHideFlags: 0

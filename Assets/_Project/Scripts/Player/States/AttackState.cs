@@ -5,12 +5,13 @@ using UnityEngine;
 namespace Construct.Player
 {
     // Plays the light combo. Each hit runs on a timer (normalized 0..1) against its AttackData:
-    // a buffered press inside the combo window chains the next hit, and from the cancel point
-    // on, moving gets the player out early. Hitboxes come in phase 06.
+    // the hitbox is live during the hit window, a buffered press inside the combo window chains
+    // the next hit, and from the cancel point on, moving gets the player out early.
     public sealed class AttackState : PlayerState
     {
         private AttackData _attack;
         private float _elapsed;
+        private bool _swingDone;
 
         public AttackState(PlayerController ctx) : base(ctx) { }
 
@@ -22,6 +23,7 @@ namespace Construct.Player
 
         public override void Exit()
         {
+            Ctx.Hitbox.Deactivate();
             Ctx.Combo.Reset();
             Ctx.Animator.PlayLocomotion();
         }
@@ -33,6 +35,7 @@ namespace Construct.Player
 
             // KERNEL plants its feet: no steering, but gravity still applies
             Ctx.Motor.Move(Vector3.zero, 0f, deltaTime);
+            UpdateHitbox(normalizedTime);
 
             if (Ctx.Combo.HasNext && _attack.IsInComboWindow(normalizedTime)
                 && Ctx.InputBuffer.TryConsume(InputCommand.LightAttack))
@@ -52,10 +55,30 @@ namespace Construct.Player
 
         private void StartNextAttack()
         {
+            Ctx.Hitbox.Deactivate();
             _attack = Ctx.Combo.Next();
             _elapsed = 0f;
+            _swingDone = false;
             FaceAttackDirection();
             Ctx.Animator.PlayAttack(_attack);
+        }
+
+        // Written with "passed the start / passed the end" rather than "inside the window",
+        // so a long frame that jumps over the whole window still sweeps once
+        private void UpdateHitbox(float normalizedTime)
+        {
+            if (!_swingDone && !Ctx.Hitbox.IsActive && normalizedTime >= _attack.HitStart)
+                Ctx.Hitbox.Activate(_attack);
+
+            if (!Ctx.Hitbox.IsActive)
+                return;
+
+            Ctx.Hitbox.Sweep();
+            if (normalizedTime > _attack.HitEnd)
+            {
+                Ctx.Hitbox.Deactivate();
+                _swingDone = true;
+            }
         }
 
         // Each hit can be aimed: at the locked target, else where the stick points, else straight ahead

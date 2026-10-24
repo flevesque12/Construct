@@ -856,7 +856,14 @@ Scene setup: Capsule named `TrainingDummy` on layer **`Targetable`** (keep its C
 - `AttackData` (Combat, SO in `Data/Attacks/`): Animator state name (hashed in `OnEnable`), clip (for duration), speed, transition, normalized combo window and cancel start. **Timing is data, not Animation Events**: the clips are in the git-ignored ThirdParty pack, so events written into their import settings would be lost on clone.
 - `ComboController` ([Serializable] on PlayerController, `_lightCombo` = Light1/2/3), `AttackState` (timer → normalized time; buffered press in window chains, move after cancel point exits, end → Locomotion), `PlayerMotor.SnapFacing` (each hit faces the lock target or the stick).
 - `Kernel.controller`: param `AttackSpeed` (default 1), states `Light1/2/3` = `HumanM@Attack1H01/02/03_R`, speed driven by `AttackSpeed`, no transitions (played by `PlayerAnimator.PlayAttack`, back with `PlayLocomotion`).
-- Data: Light1/2 speed 1.4 (≈ 0.8 s), Light3 1.25 (≈ 1.04 s); combo window 0.30–0.75; cancel 0.65 (Light3 0.75). Swap clips or tune in the assets, no code.
+- Data: Light1/2 speed 1.4 (≈ 0.8 s), Light3 1.25 (≈ 1.04 s); cancel 0.65 (Light3 0.75). Swap clips or tune in the assets, no code.
+
+### Damage chain (phase 06, piece 1)
+- Combat assembly: `CombatTeam`, `HitInfo` (readonly struct, passed with `in`), `IDamageable`, `Health` (Damaged/Died), `Integrity` (fills, `Breached` once when full, `ResetGauge`), `Combatant` (requires Health, optional Integrity, `Hit` event), `Hurtbox` (trigger collider on layer **Hurtbox = 8**, points to its Combatant), `Hitbox` (box query `OverlapBoxNonAlloc` on the Hurtbox layer while active, each target once per swing, skips its own team).
+- `AttackData` gained damage (10 HP / 6 Integrity) and a hit window (0.30–0.50). The combo window is clamped to start after the hit window (now 0.50–0.85) so chaining never cuts a hit. `AttackState` activates the hitbox once the hit start is passed, sweeps every tick, and deactivates after the hit end (robust to long frames).
+- Player: `Health`, `Combatant` (team Player), child `AttackHitbox` (box center 0/1/0.9, size 1.2/1/1.4 in front of KERNEL until the sword exists), `PlayerController._hitbox`.
+- `TrainingDummy` prefab: `Health` 100, `Integrity` 30, `Combatant` (Enemy), child `Hurtbox` (trigger capsule slightly larger than the body). The dummy refills its Health when it dies. Breach has no effect yet (phase 09).
+- Editor eval gotcha: never use `??` on `GetComponent` results, Unity's fake null is not C# null.
 
 ### Lock-on — done (2026-10-21)
 `LockOnSystem` (scoring, toggle, auto-release, `TrySwitch`), `LookFlickDetector`, strafe in `LocomotionState`, `ICameraRig` + `CinemachineCameraRig` with the lock camera. The original plan is kept below for reference. Next: phase 03 (mannequin + animations), see the Blueprint.

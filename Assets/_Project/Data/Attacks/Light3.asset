@@ -16,5 +16,8 @@ MonoBehaviour:
   _clip: {fileID: 3094330708855449807, guid: 2b05484725551f9499d2fe5c8ce01aec, type: 3}
   _speed: 1.25
   _transitionDuration: 0.08
-  _comboWindow: {x: 0.3, y: 0.75}
+  _healthDamage: 10
+  _integrityDamage: 6
+  _hitWindow: {x: 0.3, y: 0.5}
+  _comboWindow: {x: 0.5, y: 0.85}
   _cancelStart: 0.75
