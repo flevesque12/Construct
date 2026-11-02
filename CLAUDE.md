@@ -870,7 +870,13 @@ Scene setup: Capsule named `TrainingDummy` on layer **`Targetable`** (keep its C
 - `HitFeedback` (Combat, on every Combatant that should react): swaps its renderers to `Materials/HitFlashMAT` (URP Unlit white) for 0.08 s real time, raises `Data/Events/HitstopChannel` and `CameraImpulseChannel` (both `FloatEventChannel`). On `Integrity.Breached`: hitstop 0.12, impulse 1. On the dummy prefab and on the Player.
 - `Hitstop` (Core, on `_Systems`) listens to the hitstop channel and asks `SlowMotion` for scale 0, keeping the longest pending freeze. Channels are used because the hitters are prefabs and can't reference scene objects.
 - `CameraImpulsePlayer` (Cameras, on CameraRig with a `CinemachineImpulseSource`: Uniform, Bump, 0.25 s, velocity 0/−0.3/0) plays the channel; `CinemachineImpulseManager.IgnoreTimeScale = true` so the shake plays during the freeze. Each of the 3 cameras has a `CinemachineImpulseListener`.
-- Testing note: in paused step mode `unscaledTime` barely moves, so real-time effects (hitstop, flash) never end there. Test them unpaused (auto-tick on) and record a timeline with `EditorApplication.update`.
+- Testing note: in paused step mode `unscaledTime` barely moves, so real-time effects (hitstop, flash) never end there. Test them unpaused (auto-tick on) and record a timeline with `EditorApplication.update`. If the unpaused game stays stuck on frame 2, step-test instead and end the hitstop with `SlowMotion.Release(hitstop)`.
+
+### Hit particles (phase 07, piece 2)
+- `HitEventChannel` (Combat, `Data/Events/HitChannel.asset`, payload `HitInfo`) raised by `HitFeedback` on every hit.
+- `HitVfxSpawner` (Combat, on `_Systems`) owns a `UnityEngine.Pool.ObjectPool<PooledParticle>` (8 pre-warmed, max 32) and plays `Prefabs/VFX/HitPixelBurst` at the hit point, sprayed back toward the attacker (out of the struck surface).
+- `PooledParticle` releases itself in `OnParticleSystemStopped` (Stop Action = Callback).
+- `HitPixelBurst`: burst of 10–16 cube meshes (`Materials/HitPixelMAT`, URP Particles/Unlit), cone 55°, speed 3–7, life 0.25–0.45 s, gravity 1.5, size shrinks to 0, color white → cyan. Scaled time, so the burst freezes with the hitstop and then flies.
 
 ### Lock-on — done (2026-10-21)
 `LockOnSystem` (scoring, toggle, auto-release, `TrySwitch`), `LookFlickDetector`, strafe in `LocomotionState`, `ICameraRig` + `CinemachineCameraRig` with the lock camera. The original plan is kept below for reference. Next: phase 03 (mannequin + animations), see the Blueprint.

@@ -19,6 +19,8 @@ namespace Construct.Combat
         [Header("Channels")]
         [SerializeField] private FloatEventChannel _hitstopChannel;
         [SerializeField] private FloatEventChannel _cameraImpulseChannel;
+        [Tooltip("Global hit event: the pixel particles (and audio later) react to it.")]
+        [SerializeField] private HitEventChannel _hitChannel;
 
         [Header("Breach")]
         [SerializeField] private float _breachHitstop = 0.12f;
@@ -75,6 +77,8 @@ namespace Construct.Combat
             SetFlash(true);
             Request(_hitstopChannel, hit.Hitstop);
             Request(_cameraImpulseChannel, hit.Impulse);
+            if (_hitChannel != null)
+                _hitChannel.Raise(hit);
         }
 
         private void OnBreached()

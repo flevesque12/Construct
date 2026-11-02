@@ -973,6 +973,7 @@ MonoBehaviour:
   _flashDuration: 0.08
   _hitstopChannel: {fileID: 11400000, guid: 9255c8c4af86b1142a9672f80554b60a, type: 2}
   _cameraImpulseChannel: {fileID: 11400000, guid: 5b1074493e29f784ea0d63634d0be9bc, type: 2}
+  _hitChannel: {fileID: 11400000, guid: 876eed0d6e2600d4dbea663b1b6da175, type: 2}
   _breachHitstop: 0.12
   _breachImpulse: 1
 --- !u!1 &1355323215
@@ -2005,6 +2006,7 @@ GameObject:
   - component: {fileID: 1995627692}
   - component: {fileID: 1995627694}
   - component: {fileID: 1995627695}
+  - component: {fileID: 1995627696}
   m_Layer: 0
   m_Name: _Systems
   m_TagString: Untagged
@@ -2065,6 +2067,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Construct.Core::Construct.Core.Hitstop
   _slowMotion: {fileID: 1995627694}
   _channel: {fileID: 11400000, guid: 9255c8c4af86b1142a9672f80554b60a, type: 2}
+--- !u!114 &1995627696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995627691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e7598e30474ff144b7ff4adcfbf9991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.HitVfxSpawner
+  _channel: {fileID: 11400000, guid: 876eed0d6e2600d4dbea663b1b6da175, type: 2}
+  _prefab: {fileID: 45928184892331394, guid: 2ab0b5d13f7235f498aa2655eceb4d7d, type: 3}
+  _prewarm: 8
+  _maxSize: 32
 --- !u!1 &2133675400
 GameObject:
   m_ObjectHideFlags: 0

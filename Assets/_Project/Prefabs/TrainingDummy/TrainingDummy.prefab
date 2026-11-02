@@ -290,5 +290,6 @@ MonoBehaviour:
   _flashDuration: 0.08
   _hitstopChannel: {fileID: 11400000, guid: 9255c8c4af86b1142a9672f80554b60a, type: 2}
   _cameraImpulseChannel: {fileID: 11400000, guid: 5b1074493e29f784ea0d63634d0be9bc, type: 2}
+  _hitChannel: {fileID: 11400000, guid: 876eed0d6e2600d4dbea663b1b6da175, type: 2}
   _breachHitstop: 0.12
   _breachImpulse: 1
