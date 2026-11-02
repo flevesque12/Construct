@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 8013391879813001883}
   - component: {fileID: 3194281930648557498}
   - component: {fileID: 3024753973645278776}
+  - component: {fileID: 4670994451439695263}
   m_Layer: 6
   m_Name: TrainingDummy
   m_TagString: Untagged
@@ -271,3 +272,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Construct.Combat::Construct.Combat.Combatant
   _team: 1
+--- !u!114 &4670994451439695263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308247874458692612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a62bdbc671c7ba418ea8e7a38a530c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Construct.Combat::Construct.Combat.HitFeedback
+  _renderers:
+  - {fileID: 2986904862363024959}
+  _flashMaterial: {fileID: 2100000, guid: d4c333707b79a4e409c3007a033b253b, type: 2}
+  _flashDuration: 0.08
+  _hitstopChannel: {fileID: 11400000, guid: 9255c8c4af86b1142a9672f80554b60a, type: 2}
+  _cameraImpulseChannel: {fileID: 11400000, guid: 5b1074493e29f784ea0d63634d0be9bc, type: 2}
+  _breachHitstop: 0.12
+  _breachImpulse: 1

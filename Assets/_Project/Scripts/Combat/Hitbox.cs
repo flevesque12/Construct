@@ -57,7 +57,8 @@ namespace Construct.Combat
 
                 var hit = new HitInfo(
                     _attack.HealthDamage, _attack.IntegrityDamage,
-                    _hits[i].ClosestPoint(center), direction.normalized, _owner);
+                    _hits[i].ClosestPoint(center), direction.normalized, _owner,
+                    _attack.Hitstop, _attack.Impulse);
 
                 target.ReceiveHit(in hit);
                 landed++;

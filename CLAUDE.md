@@ -865,6 +865,13 @@ Scene setup: Capsule named `TrainingDummy` on layer **`Targetable`** (keep its C
 - `TrainingDummy` prefab: `Health` 100, `Integrity` 30, `Combatant` (Enemy), child `Hurtbox` (trigger capsule slightly larger than the body). The dummy refills its Health when it dies. Breach has no effect yet (phase 09).
 - Editor eval gotcha: never use `??` on `GetComponent` results, Unity's fake null is not C# null.
 
+### Hit feel (phase 07, piece 1)
+- `AttackData` + `HitInfo` carry `Hitstop` (real seconds, lights 0.05) and `Impulse` (camera shake force, lights 0: the GDD keeps shake for heavy hits and Breach).
+- `HitFeedback` (Combat, on every Combatant that should react): swaps its renderers to `Materials/HitFlashMAT` (URP Unlit white) for 0.08 s real time, raises `Data/Events/HitstopChannel` and `CameraImpulseChannel` (both `FloatEventChannel`). On `Integrity.Breached`: hitstop 0.12, impulse 1. On the dummy prefab and on the Player.
+- `Hitstop` (Core, on `_Systems`) listens to the hitstop channel and asks `SlowMotion` for scale 0, keeping the longest pending freeze. Channels are used because the hitters are prefabs and can't reference scene objects.
+- `CameraImpulsePlayer` (Cameras, on CameraRig with a `CinemachineImpulseSource`: Uniform, Bump, 0.25 s, velocity 0/−0.3/0) plays the channel; `CinemachineImpulseManager.IgnoreTimeScale = true` so the shake plays during the freeze. Each of the 3 cameras has a `CinemachineImpulseListener`.
+- Testing note: in paused step mode `unscaledTime` barely moves, so real-time effects (hitstop, flash) never end there. Test them unpaused (auto-tick on) and record a timeline with `EditorApplication.update`.
+
 ### Lock-on — done (2026-10-21)
 `LockOnSystem` (scoring, toggle, auto-release, `TrySwitch`), `LookFlickDetector`, strafe in `LocomotionState`, `ICameraRig` + `CinemachineCameraRig` with the lock camera. The original plan is kept below for reference. Next: phase 03 (mannequin + animations), see the Blueprint.
 

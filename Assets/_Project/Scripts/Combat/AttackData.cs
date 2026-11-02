@@ -22,6 +22,12 @@ namespace Construct.Combat
         [SerializeField] private float _healthDamage = 10f;
         [SerializeField] private float _integrityDamage = 6f;
 
+        [Header("Feel")]
+        [Tooltip("Real seconds the whole game freezes when this attack connects (0.05 light, 0.12 heavy).")]
+        [SerializeField] private float _hitstop = 0.05f;
+        [Tooltip("Camera shake force on hit. 0 = none (the GDD keeps shake for heavy hits and Breach).")]
+        [SerializeField] private float _impulse;
+
         [Header("Windows (normalized)")]
         [Tooltip("The hitbox is live during this window: where the swing actually connects.")]
         [SerializeField] private Vector2 _hitWindow = new Vector2(0.3f, 0.5f);
@@ -39,6 +45,8 @@ namespace Construct.Combat
         public float Duration => _clip != null ? _clip.length / _speed : 0.5f;
         public float HealthDamage => _healthDamage;
         public float IntegrityDamage => _integrityDamage;
+        public float Hitstop => _hitstop;
+        public float Impulse => _impulse;
         public float CancelStart => _cancelStart;
         public float HitStart => _hitWindow.x;
         public float HitEnd => _hitWindow.y;
